@@ -1,5 +1,10 @@
-﻿using MAD.DataWarehouse.BIM360.Api;
+﻿using Hangfire;
+using MAD.DataWarehouse.BIM360.Api;
+using MAD.DataWarehouse.BIM360.Database;
+using MAD.DataWarehouse.BIM360.Jobs;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using MIFCore.Hangfire;
 using MIFCore.Settings;
 
 namespace MAD.DataWarehouse.BIM360
@@ -10,6 +15,8 @@ namespace MAD.DataWarehouse.BIM360
         {
             serviceDescriptors.AddIntegrationSettings<AppConfig>();
             serviceDescriptors.AddApi();
+
+            serviceDescriptors.AddDbContextFactory<AppDbContext>((svc, options) => options.UseSqlServer(svc.GetRequiredService<AppConfig>().ConnectionString));
         }
 
         public void Configure()
@@ -17,9 +24,9 @@ namespace MAD.DataWarehouse.BIM360
 
         }
 
-        public void PostConfigure()
+        public void PostConfigure(IRecurringJobManager recurringJobManager)
         {
-
+            recurringJobManager.CreateRecurringJob<HubConsumer>("hubs", y => y.ConsumeHubs());
         }
     }
 }
