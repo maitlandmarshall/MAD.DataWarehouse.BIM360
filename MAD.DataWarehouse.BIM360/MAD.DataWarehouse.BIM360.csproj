@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Api\Accounts\" />
     <Folder Include="Jobs\" />
     <Folder Include="Services\" />
   </ItemGroup>
