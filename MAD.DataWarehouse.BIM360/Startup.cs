@@ -17,6 +17,9 @@ namespace MAD.DataWarehouse.BIM360
             serviceDescriptors.AddApi();
 
             serviceDescriptors.AddDbContextFactory<AppDbContext>((svc, options) => options.UseSqlServer(svc.GetRequiredService<AppConfig>().ConnectionString));
+
+            serviceDescriptors.AddScoped<HubConsumer>();
+            serviceDescriptors.AddScoped<ProjectConsumer>();
         }
 
         public void Configure()
