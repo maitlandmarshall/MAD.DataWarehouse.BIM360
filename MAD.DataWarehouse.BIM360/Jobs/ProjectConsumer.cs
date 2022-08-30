@@ -44,7 +44,7 @@ namespace MAD.DataWarehouse.BIM360.Jobs
 
             if (projects.Count() >= limit)
             {
-                this.backgroundJobClient.Enqueue<ProjectConsumer>(y => y.ConsumeProjects(accountId, offset + limit));
+                this.backgroundJobClient.Enqueue<ProjectConsumer>(y => y.ConsumeProjects(hubId, offset + limit));
             }
         }
     }

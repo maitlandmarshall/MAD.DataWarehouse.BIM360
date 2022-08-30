@@ -7,6 +7,6 @@ namespace MAD.DataWarehouse.BIM360.Api.Authenticate
     {
         [Post("/authenticate")]
         [Headers("Content-Type:application/x-www-form-urlencoded")]
-        Task<AuthenticateResponse> Authenticate([Body] AuthenticateRequest request);
+        Task<AuthenticateResponse> Authenticate([Body(BodySerializationMethod.UrlEncoded)] AuthenticateRequest request);
     }
 }

@@ -27,8 +27,11 @@ namespace MAD.DataWarehouse.BIM360
 
         }
 
-        public void PostConfigure(IRecurringJobManager recurringJobManager)
+        public void PostConfigure(IRecurringJobManager recurringJobManager, IDbContextFactory<AppDbContext> dbContextFactory)
         {
+            using var db = dbContextFactory.CreateDbContext();
+            db.Database.Migrate();
+
             recurringJobManager.CreateRecurringJob<HubConsumer>("hubs", y => y.ConsumeHubs());
         }
     }
