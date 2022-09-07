@@ -1,4 +1,5 @@
 ﻿using MAD.DataWarehouse.BIM360.Api.Accounts;
+using MAD.DataWarehouse.BIM360.Api.Data;
 using MAD.DataWarehouse.BIM360.Api.Project;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -71,7 +72,16 @@ namespace MAD.DataWarehouse.BIM360.Database
                         });
                     });
 
+                    cfg.OwnsOne(y => y.Tip, cfg =>
+                    {
+                        cfg.OwnsOne(y => y.Data, cfg =>
+                        {
+                            cfg.HasIndex(y => y.Id);
+                        });
+                    });
+
                     cfg.Navigation(y => y.Parent).IsRequired();
+                    cfg.Navigation(y => y.Tip).IsRequired();
                 });
 
                 cfg.Navigation(y => y.Relationships).IsRequired();

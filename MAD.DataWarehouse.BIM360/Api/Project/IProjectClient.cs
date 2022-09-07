@@ -1,4 +1,5 @@
-﻿using Refit;
+﻿using MAD.DataWarehouse.BIM360.Api.Data;
+using Refit;
 using System.Threading.Tasks;
 
 namespace MAD.DataWarehouse.BIM360.Api.Project
@@ -9,6 +10,6 @@ namespace MAD.DataWarehouse.BIM360.Api.Project
         Task<HubsResponse> Hubs();
 
         [Get("/hubs/{hubId}/projects/{projectId}/topFolders")]
-        Task<ProjectApiResponse<FolderItem>> TopFolders(string hubId, string projectId);
+        Task<ApiResponse<FolderItem>> TopFolders(string hubId, string projectId);
     }
 }

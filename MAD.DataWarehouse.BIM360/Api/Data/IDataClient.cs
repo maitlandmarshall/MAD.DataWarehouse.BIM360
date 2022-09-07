@@ -11,6 +11,6 @@ namespace MAD.DataWarehouse.BIM360.Api.Data
     internal interface IDataClient
     {
         [Get("/projects/{projectId}/folders/{folderId}/contents")]
-        Task<ProjectApiResponse<FolderItem>> FolderContents(string projectId, string folderId);
+        Task<ApiResponse<FolderItem>> FolderContents(string projectId, string folderId);
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace MAD.DataWarehouse.BIM360.Api.Project
+namespace MAD.DataWarehouse.BIM360.Api
 {
-    internal class ProjectApiResponse<TData>
+    internal class ApiResponse<TData>
     {
         public IEnumerable<TData> Data { get; set; }
     }

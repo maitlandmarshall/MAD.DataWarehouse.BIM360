@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-namespace MAD.DataWarehouse.BIM360.Api.Project
+namespace MAD.DataWarehouse.BIM360.Api.Data
 {
     public class FolderItem
     {
@@ -25,16 +25,19 @@ namespace MAD.DataWarehouse.BIM360.Api.Project
     public partial class FolderItemRelationships
     {
         [JsonProperty("parent")]
-        public FolderItemParent Parent { get; set; }
+        public RelationshipContainer Parent { get; set; }
+
+        [JsonProperty("tip")]
+        public RelationshipContainer Tip { get; set; }
     }
 
-    public partial class FolderItemParent
+    public partial class RelationshipContainer
     {
         [JsonProperty("data")]
-        public FolderItemParentData Data { get; set; }
+        public RelationshipContainerData Data { get; set; }
     }
 
-    public partial class FolderItemParentData
+    public partial class RelationshipContainerData
     {
         [JsonProperty("type")]
         public string Type { get; set; }
