@@ -1,6 +1,8 @@
 ﻿using MAD.DataWarehouse.BIM360.Api.Accounts;
 using MAD.DataWarehouse.BIM360.Api.Project;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace MAD.DataWarehouse.BIM360.Database
 {
@@ -23,6 +25,56 @@ namespace MAD.DataWarehouse.BIM360.Database
             {
                 cfg.HasKey(y => y.Id);
                 cfg.HasIndex(y => y.AccountId);
+            });
+
+            modelBuilder.Entity<FolderItem>(cfg =>
+            {
+                cfg.HasKey(y => new { y.Id, y.ProjectId});
+                cfg.OwnsOne(y => y.Attributes, cfg =>
+                {
+                    cfg.OwnsOne(y => y.Extension, cfg =>
+                    {
+                        cfg.Ignore(y => y.Schema);
+
+                        cfg.OwnsOne(y => y.Data, cfg =>
+                        {
+                            cfg.Property(y => y.VisibleTypes).HasConversion(
+                                y => JsonConvert.SerializeObject(y),
+                                y => JsonConvert.DeserializeObject<List<string>>(y));
+
+                            cfg.Property(y => y.Actions).HasConversion(
+                                y => JsonConvert.SerializeObject(y),
+                                y => JsonConvert.DeserializeObject<List<string>>(y));
+
+                            cfg.Property(y => y.AllowedTypes).HasConversion(
+                                y => JsonConvert.SerializeObject(y),
+                                y => JsonConvert.DeserializeObject<List<string>>(y));
+
+                            cfg.Property(y => y.NamingStandardIds).HasConversion(
+                                y => JsonConvert.SerializeObject(y),
+                                y => JsonConvert.DeserializeObject<List<object>>(y));
+                        });
+                    });
+
+                    cfg.Navigation(y => y.Extension).IsRequired();
+                });
+
+                cfg.Navigation(y => y.Attributes).IsRequired();
+
+                cfg.OwnsOne(y => y.Relationships, cfg =>
+                {
+                    cfg.OwnsOne(y => y.Parent, cfg =>
+                    {
+                        cfg.OwnsOne(y => y.Data, cfg =>
+                        {
+                            cfg.HasIndex(y => y.Id);
+                        });
+                    });
+
+                    cfg.Navigation(y => y.Parent).IsRequired();
+                });
+
+                cfg.Navigation(y => y.Relationships).IsRequired();
             });
         }
     }

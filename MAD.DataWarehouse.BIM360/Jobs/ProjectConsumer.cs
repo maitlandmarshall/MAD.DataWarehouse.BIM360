@@ -42,6 +42,11 @@ namespace MAD.DataWarehouse.BIM360.Jobs
 
             await db.SaveChangesAsync();
 
+            foreach (var p in projects)
+            {
+                this.backgroundJobClient.Enqueue<FolderConsumer>(y => y.ConsumeFolders(hubId, p.Id));
+            }
+
             if (projects.Count() >= limit)
             {
                 this.backgroundJobClient.Enqueue<ProjectConsumer>(y => y.ConsumeProjects(hubId, offset + limit));

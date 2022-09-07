@@ -7,6 +7,8 @@ namespace MAD.DataWarehouse.BIM360.Api.Project
 {
     public class FolderItem
     {
+        public string ProjectId { get; set; }
+
         [JsonProperty("type")]
         public string Type { get; set; }
 

@@ -20,6 +20,7 @@ namespace MAD.DataWarehouse.BIM360
 
             serviceDescriptors.AddScoped<HubConsumer>();
             serviceDescriptors.AddScoped<ProjectConsumer>();
+            serviceDescriptors.AddScoped<FolderConsumer>();
         }
 
         public void Configure()
