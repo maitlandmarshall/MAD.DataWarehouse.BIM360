@@ -26,7 +26,15 @@ namespace MAD.DataWarehouse.BIM360.Api
 
             request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", this.authenticateResponse.AccessToken);
 
-            return await base.SendAsync(request, cancellationToken);
+            var response = await base.SendAsync(request, cancellationToken);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+            {
+                var retryAfter = response.Headers.RetryAfter;
+                await Task.Delay(retryAfter.Delta.Value);
+            }
+
+            return response;
         }
 
         private async Task EnsureAuthenticated()
