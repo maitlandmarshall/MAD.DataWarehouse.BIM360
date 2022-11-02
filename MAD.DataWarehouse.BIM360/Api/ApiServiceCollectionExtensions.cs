@@ -1,6 +1,7 @@
 ﻿using MAD.DataWarehouse.BIM360.Api.Accounts;
 using MAD.DataWarehouse.BIM360.Api.Authenticate;
 using MAD.DataWarehouse.BIM360.Api.Data;
+using MAD.DataWarehouse.BIM360.Api.DesignAutomation;
 using MAD.DataWarehouse.BIM360.Api.Project;
 using Microsoft.Extensions.DependencyInjection;
 using Refit;
@@ -33,6 +34,11 @@ namespace MAD.DataWarehouse.BIM360.Api
             serviceDescriptors
                 .AddRefitClient<IAccountsClient>(settings)
                 .ConfigureHttpClient(client => client.BaseAddress = new Uri("https://developer.api.autodesk.com/hq/v1"))
+                .AddHttpMessageHandler<AuthenticationDelegationHandler>();
+
+            serviceDescriptors
+                .AddRefitClient<IDesignAutomationClient>(settings)
+                .ConfigureHttpClient(client => client.BaseAddress = new Uri("https://developer.api.autodesk.com/da/us-east/v3"))
                 .AddHttpMessageHandler<AuthenticationDelegationHandler>();
 
             return serviceDescriptors;
