@@ -24,5 +24,16 @@ namespace MAD.DataWarehouse.BIM360.Api.Buckets
 
             return responseJson.Value<string>("url");
         }
+
+        public async Task<string> GetSignedUploadUrl(string bucketKey, string objectKey)
+        {
+            var uriBuilder = new UriBuilder("https://developer.api.autodesk.com/oss/v2/buckets");
+            uriBuilder.Path += $"/{bucketKey}/objects/{objectKey}/signed?access=write";
+
+            var response = await httpClient.GetStringAsync(uriBuilder.ToString());
+            var responseJson = JObject.Parse(response);
+
+            return responseJson.Value<string>("signedUrl");
+        }
     }
 }
