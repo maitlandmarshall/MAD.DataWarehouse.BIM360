@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
@@ -29,12 +28,21 @@ namespace MAD.DataWarehouse.BIM360.Api.Data
 
         [JsonProperty("tip")]
         public RelationshipContainer Tip { get; set; }
+        
+        [JsonProperty("storage")]
+        public RelationshipContainer Storage { get; set; }
+
+        [JsonProperty("item")]
+        public RelationshipContainer Item { get; set; }
     }
 
     public partial class RelationshipContainer
     {
         [JsonProperty("data")]
         public RelationshipContainerData Data { get; set; }
+
+        [JsonProperty("meta")]
+        public RelationshipContainerMeta Meta { get; set; }
     }
 
     public partial class RelationshipContainerData
@@ -44,6 +52,18 @@ namespace MAD.DataWarehouse.BIM360.Api.Data
 
         [JsonProperty("id")]
         public string Id { get; set; }
+    }
+
+    public class RelationshipContainerMetaLink
+    {
+        [JsonProperty("href")]
+        public string Href { get; set; }
+    }
+
+    public class RelationshipContainerMeta
+    {
+        [JsonProperty("link")]
+        public RelationshipContainerMetaLink Link { get; set; }
     }
 
     public partial class FolderItemAttribute
@@ -83,6 +103,18 @@ namespace MAD.DataWarehouse.BIM360.Api.Data
 
         [JsonProperty("extension")]
         public FolderItemAttributeExtension Extension { get; set; }
+
+        [JsonProperty("versionNumber")]
+        public int? VersionNumber { get; set; }
+
+        [JsonProperty("mimeType")]
+        public string MimeType { get; set; }
+
+        [JsonProperty("storageSize")]
+        public int? StorageSize { get; set; }
+
+        [JsonProperty("fileType")]
+        public string FileType { get; set; }
     }
 
     public partial class FolderItemAttributeExtension

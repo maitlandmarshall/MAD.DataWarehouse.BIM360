@@ -4,6 +4,8 @@ using MAD.DataWarehouse.BIM360.Api.Project;
 using MAD.DataWarehouse.BIM360.Database;
 using MAD.Extensions.EFCore;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MAD.DataWarehouse.BIM360.Jobs
@@ -52,9 +54,14 @@ namespace MAD.DataWarehouse.BIM360.Jobs
         public async Task ConsumeFolderContents(string projectId, string folderId)
         {
             using var db = await dbContextFactory.CreateDbContextAsync();
+            
+            // Get the contents of the folder
             var contents = await dataClient.FolderContents(projectId, folderId);
 
-            foreach (var t in contents.Data)
+            // Merge the Data and Included properties, as the Included property may include versions of files
+            var data = contents.Data.Concat(contents.Included ?? new List<FolderItem>()).ToList();
+
+            foreach (var t in data)
             {
                 t.ProjectId = projectId;
                 db.Upsert(t);

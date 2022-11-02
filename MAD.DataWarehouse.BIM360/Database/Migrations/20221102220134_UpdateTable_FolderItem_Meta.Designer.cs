@@ -4,6 +4,7 @@ using MAD.DataWarehouse.BIM360.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MAD.DataWarehouse.BIM360.Database.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221102220134_UpdateTable_FolderItem_Meta")]
+    partial class UpdateTable_FolderItem_Meta
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -265,88 +267,6 @@ namespace MAD.DataWarehouse.BIM360.Database.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("FolderItemId", "FolderItemProjectId");
 
-                            b1.OwnsOne("MAD.DataWarehouse.BIM360.Api.Data.RelationshipContainer", "Item", b2 =>
-                                {
-                                    b2.Property<string>("FolderItemRelationshipsFolderItemId")
-                                        .HasColumnType("nvarchar(450)");
-
-                                    b2.Property<string>("FolderItemRelationshipsFolderItemProjectId")
-                                        .HasColumnType("nvarchar(450)");
-
-                                    b2.HasKey("FolderItemRelationshipsFolderItemId", "FolderItemRelationshipsFolderItemProjectId");
-
-                                    b2.ToTable("FolderItem");
-
-                                    b2.WithOwner()
-                                        .HasForeignKey("FolderItemRelationshipsFolderItemId", "FolderItemRelationshipsFolderItemProjectId");
-
-                                    b2.OwnsOne("MAD.DataWarehouse.BIM360.Api.Data.RelationshipContainerData", "Data", b3 =>
-                                        {
-                                            b3.Property<string>("RelationshipContainerFolderItemRelationshipsFolderItemId")
-                                                .HasColumnType("nvarchar(450)");
-
-                                            b3.Property<string>("RelationshipContainerFolderItemRelationshipsFolderItemProjectId")
-                                                .HasColumnType("nvarchar(450)");
-
-                                            b3.Property<string>("Id")
-                                                .HasColumnType("nvarchar(450)");
-
-                                            b3.Property<string>("Type")
-                                                .HasColumnType("nvarchar(max)");
-
-                                            b3.HasKey("RelationshipContainerFolderItemRelationshipsFolderItemId", "RelationshipContainerFolderItemRelationshipsFolderItemProjectId");
-
-                                            b3.HasIndex("Id");
-
-                                            b3.ToTable("FolderItem");
-
-                                            b3.WithOwner()
-                                                .HasForeignKey("RelationshipContainerFolderItemRelationshipsFolderItemId", "RelationshipContainerFolderItemRelationshipsFolderItemProjectId");
-                                        });
-
-                                    b2.OwnsOne("MAD.DataWarehouse.BIM360.Api.Data.RelationshipContainerMeta", "Meta", b3 =>
-                                        {
-                                            b3.Property<string>("RelationshipContainerFolderItemRelationshipsFolderItemId")
-                                                .HasColumnType("nvarchar(450)");
-
-                                            b3.Property<string>("RelationshipContainerFolderItemRelationshipsFolderItemProjectId")
-                                                .HasColumnType("nvarchar(450)");
-
-                                            b3.HasKey("RelationshipContainerFolderItemRelationshipsFolderItemId", "RelationshipContainerFolderItemRelationshipsFolderItemProjectId");
-
-                                            b3.ToTable("FolderItem");
-
-                                            b3.WithOwner()
-                                                .HasForeignKey("RelationshipContainerFolderItemRelationshipsFolderItemId", "RelationshipContainerFolderItemRelationshipsFolderItemProjectId");
-
-                                            b3.OwnsOne("MAD.DataWarehouse.BIM360.Api.Data.RelationshipContainerMetaLink", "Link", b4 =>
-                                                {
-                                                    b4.Property<string>("RelationshipContainerMetaRelationshipContainerFolderItemRelationshipsFolderItemId")
-                                                        .HasColumnType("nvarchar(450)");
-
-                                                    b4.Property<string>("RelationshipContainerMetaRelationshipContainerFolderItemRelationshipsFolderItemProjectId")
-                                                        .HasColumnType("nvarchar(450)");
-
-                                                    b4.Property<string>("Href")
-                                                        .HasColumnType("nvarchar(max)");
-
-                                                    b4.HasKey("RelationshipContainerMetaRelationshipContainerFolderItemRelationshipsFolderItemId", "RelationshipContainerMetaRelationshipContainerFolderItemRelationshipsFolderItemProjectId");
-
-                                                    b4.ToTable("FolderItem");
-
-                                                    b4.WithOwner()
-                                                        .HasForeignKey("RelationshipContainerMetaRelationshipContainerFolderItemRelationshipsFolderItemId", "RelationshipContainerMetaRelationshipContainerFolderItemRelationshipsFolderItemProjectId");
-                                                });
-
-                                            b3.Navigation("Link");
-                                        });
-
-                                    b2.Navigation("Data");
-
-                                    b2.Navigation("Meta")
-                                        .IsRequired();
-                                });
-
                             b1.OwnsOne("MAD.DataWarehouse.BIM360.Api.Data.RelationshipContainer", "Parent", b2 =>
                                 {
                                     b2.Property<string>("FolderItemRelationshipsFolderItemId")
@@ -592,9 +512,6 @@ namespace MAD.DataWarehouse.BIM360.Database.Migrations
                                     b2.Navigation("Meta")
                                         .IsRequired();
                                 });
-
-                            b1.Navigation("Item")
-                                .IsRequired();
 
                             b1.Navigation("Parent")
                                 .IsRequired();

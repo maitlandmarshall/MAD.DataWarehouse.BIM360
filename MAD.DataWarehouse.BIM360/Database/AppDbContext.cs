@@ -70,6 +70,13 @@ namespace MAD.DataWarehouse.BIM360.Database
                         {
                             cfg.HasIndex(y => y.Id);
                         });
+
+                        cfg.OwnsOne(y => y.Meta, cfg =>
+                        {
+                            cfg.OwnsOne(y => y.Link);
+                        });
+
+                        cfg.Navigation(y => y.Meta).IsRequired();
                     });
 
                     cfg.OwnsOne(y => y.Tip, cfg =>
@@ -78,10 +85,49 @@ namespace MAD.DataWarehouse.BIM360.Database
                         {
                             cfg.HasIndex(y => y.Id);
                         });
+
+                        cfg.OwnsOne(y => y.Meta, cfg =>
+                        {
+                            cfg.OwnsOne(y => y.Link);
+                        });
+
+                        cfg.Navigation(y => y.Meta).IsRequired();
+                    });
+
+                    cfg.OwnsOne(y => y.Storage, cfg =>
+                    {
+                        cfg.OwnsOne(y => y.Data, cfg =>
+                        {
+                            cfg.HasIndex(y => y.Id);
+                        });
+
+                        cfg.OwnsOne(y => y.Meta, cfg =>
+                        {
+                            cfg.OwnsOne(y => y.Link);
+                        });
+
+                        cfg.Navigation(y => y.Meta).IsRequired();
+                    });
+
+                    cfg.OwnsOne(y => y.Item, cfg =>
+                    {
+                        cfg.OwnsOne(y => y.Data, cfg =>
+                        {
+                            cfg.HasIndex(y => y.Id);
+                        });
+
+                        cfg.OwnsOne(y => y.Meta, cfg =>
+                        {
+                            cfg.OwnsOne(y => y.Link);
+                        });
+
+                        cfg.Navigation(y => y.Meta).IsRequired();
                     });
 
                     cfg.Navigation(y => y.Parent).IsRequired();
                     cfg.Navigation(y => y.Tip).IsRequired();
+                    cfg.Navigation(y => y.Storage).IsRequired();
+                    cfg.Navigation(y => y.Item).IsRequired();
                 });
 
                 cfg.Navigation(y => y.Relationships).IsRequired();
