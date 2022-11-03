@@ -42,7 +42,7 @@ namespace MAD.DataWarehouse.BIM360
             db.Database.Migrate();
 
             recurringJobManager.CreateRecurringJob<HubConsumer>("hubs", y => y.ConsumeHubs());
-            recurringJobManager.CreateRecurringJob<ReportRunProducer>("reportrunproducer", y => y.EnqueueVersionsForWorkItem());
+            recurringJobManager.CreateRecurringJob<ReportRunProducer>("reportrunproducer", y => y.EnqueueVersionsForWorkItem(), "0 0 * * 0");
         }
     }
 }
