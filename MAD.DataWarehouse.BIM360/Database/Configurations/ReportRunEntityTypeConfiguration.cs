@@ -14,6 +14,8 @@ namespace MAD.DataWarehouse.BIM360.Database.Configurations
 
             builder.Property(y => y.ProjectId).IsRequired();
             builder.Property(y => y.FolderItemId).IsRequired();
+            builder.Property(y => y.ResultObjectKey).IsRequired();
+            builder.Property(y => y.Status).IsRequired();
 
             builder.Property(y => y.CreatedAt).HasDefaultValueSql("SYSDATETIMEOFFSET()");
 

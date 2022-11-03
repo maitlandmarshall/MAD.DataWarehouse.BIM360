@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MIFCore.Hangfire;
 using MIFCore.Settings;
+using System.IO;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("MAD.DataWarehouse.BIM360.Tests")]
@@ -23,7 +24,8 @@ namespace MAD.DataWarehouse.BIM360
             serviceDescriptors.AddScoped<HubConsumer>();
             serviceDescriptors.AddScoped<ProjectConsumer>();
             serviceDescriptors.AddScoped<FolderConsumer>();
-            serviceDescriptors.AddScoped<RvtModelDataConsumer>();
+            serviceDescriptors.AddScoped<ReportRunProducer>();
+            serviceDescriptors.AddScoped<ReportRunConsumer>();
         }
 
         public void Configure()
@@ -33,11 +35,14 @@ namespace MAD.DataWarehouse.BIM360
 
         public void PostConfigure(IRecurringJobManager recurringJobManager, IDbContextFactory<AppDbContext> dbContextFactory)
         {
+            if (!Directory.Exists("temp"))
+                Directory.CreateDirectory("temp");
+
             using var db = dbContextFactory.CreateDbContext();
             db.Database.Migrate();
 
             recurringJobManager.CreateRecurringJob<HubConsumer>("hubs", y => y.ConsumeHubs());
-            recurringJobManager.CreateRecurringJob<RvtModelDataConsumer>("rvtmodels", y => y.EnqueueVersionsForWorkItem());
+            recurringJobManager.CreateRecurringJob<ReportRunProducer>("reportrunproducer", y => y.EnqueueVersionsForWorkItem());
         }
     }
 }

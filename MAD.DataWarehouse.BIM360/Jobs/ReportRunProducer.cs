@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace MAD.DataWarehouse.BIM360.Jobs
 {
-    public class RvtModelDataConsumer
+    public class ReportRunProducer
     {
         private readonly IDbContextFactory<AppDbContext> dbContextFactory;
         private readonly IBackgroundJobClient backgroundJobClient;
@@ -19,7 +19,7 @@ namespace MAD.DataWarehouse.BIM360.Jobs
         private readonly BucketsClient bucketsClient;
         private readonly AppConfig appConfig;
 
-        public RvtModelDataConsumer(
+        public ReportRunProducer(
             IDbContextFactory<AppDbContext> dbContextFactory,
             IBackgroundJobClient backgroundJobClient,
             IDesignAutomationClient designAutomationClient,
@@ -44,7 +44,7 @@ namespace MAD.DataWarehouse.BIM360.Jobs
                 
             await foreach (var v in versions)
             {
-                this.backgroundJobClient.Enqueue<RvtModelDataConsumer>(y => y.EnqueueWorkItem(v.ProjectId, v.Id));
+                this.backgroundJobClient.Enqueue<ReportRunProducer>(y => y.EnqueueWorkItem(v.ProjectId, v.Id));
             }
         }
 
@@ -80,17 +80,39 @@ namespace MAD.DataWarehouse.BIM360.Jobs
                 }
             });
 
-            this.backgroundJobClient.Enqueue<RvtModelDataConsumer>(y => y.HandleWorkItem(projectId, folderItemId, workItem.Id, uploadObjectKey));
+            var reportRun = new ReportRun
+            {
+                WorkItemId = workItem.Id,
+                FolderItemId = folderItemId,
+                ProjectId = projectId,
+                ResultObjectKey = uploadObjectKey,
+                Status = workItem.Status,
+                Stats = workItem.Stats
+            };
+
+            db.Add(reportRun);
+            await db.SaveChangesAsync();
+
+            this.backgroundJobClient.Enqueue<ReportRunProducer>(y => y.HandleWorkItem(workItem.Id));
         }
 
         [AutomaticRetry(Attempts = 15)]
-        public async Task HandleWorkItem(string projectId, string folderItemId, string workItemId, string resultObjectKey)
+        public async Task HandleWorkItem(string workItemId)
         {
+            using var db = await dbContextFactory.CreateDbContextAsync();
+            
+            var reportRun = db.Find<ReportRun>(workItemId);
             var workItem = await this.designAutomationClient.GetWorkItem(workItemId);
+
+            reportRun.Stats = workItem.Stats;
+            reportRun.Status = workItem.Status;
+
+            await db.SaveChangesAsync();
 
             switch (workItem.Status)
             {
                 case "success":
+                    this.backgroundJobClient.Enqueue<ReportRunConsumer>(y => y.ConsumeReportRun(workItemId));
                     break;
                 case "pending":
                     throw new RescheduleJobException(DateTime.Now.AddMinutes(2));
@@ -103,8 +125,7 @@ namespace MAD.DataWarehouse.BIM360.Jobs
                 case "failedUpload":
                 case "failedUploadOptional":
                     break;
-            }
-            
+            }            
         }
 
 
