@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace MAD.DataWarehouse.BIM360.Database
 {
-    internal class AppDbContext : DbContext
+    public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions options) : base(options)
         {

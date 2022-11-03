@@ -7,6 +7,9 @@
         public string ClientId { get; set; }
         public string ClientSecret { get; set; }
         public string GrantType { get; set; } = "client_credentials";
-        public string Scope { get; set; } = "user:read viewables:read data:read data:search account:read";
+        public string Scope { get; set; } = "code:all user:read viewables:read data:read data:search account:read bucket:create bucket:delete bucket:read data:write";
+
+        public string ActivityId { get; set; }
+        public string BucketKey { get; set; }
     }
 }

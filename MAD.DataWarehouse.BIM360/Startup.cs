@@ -6,7 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MIFCore.Hangfire;
 using MIFCore.Settings;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("MAD.DataWarehouse.BIM360.Tests")]
 namespace MAD.DataWarehouse.BIM360
 {
     internal class Startup
@@ -21,6 +23,7 @@ namespace MAD.DataWarehouse.BIM360
             serviceDescriptors.AddScoped<HubConsumer>();
             serviceDescriptors.AddScoped<ProjectConsumer>();
             serviceDescriptors.AddScoped<FolderConsumer>();
+            serviceDescriptors.AddScoped<RvtModelDataConsumer>();
         }
 
         public void Configure()
@@ -34,6 +37,7 @@ namespace MAD.DataWarehouse.BIM360
             db.Database.Migrate();
 
             recurringJobManager.CreateRecurringJob<HubConsumer>("hubs", y => y.ConsumeHubs());
+            recurringJobManager.CreateRecurringJob<RvtModelDataConsumer>("rvtmodels", y => y.EnqueueVersionsForWorkItem());
         }
     }
 }

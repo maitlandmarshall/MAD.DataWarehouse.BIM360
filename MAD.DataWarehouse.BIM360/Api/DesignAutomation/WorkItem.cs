@@ -2,7 +2,7 @@
 
 namespace MAD.DataWarehouse.BIM360.Api.DesignAutomation
 {
-    internal class WorkItem
+    public class WorkItem
     {
         public string Status { get; set; }
         public string Id { get; set; }
