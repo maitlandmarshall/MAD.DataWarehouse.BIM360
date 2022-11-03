@@ -20,7 +20,15 @@ namespace MAD.DataWarehouse.BIM360.Api.Buckets
         {
             var uriBuilder = new UriBuilder(url);
             uriBuilder.Path += "/signeds3download";
-            uriBuilder.Query += "minutesExpiration=60";
+
+            if (string.IsNullOrWhiteSpace(uriBuilder.Query))
+            {
+                uriBuilder.Query = "minutesExpiration=60";
+            }
+            else
+            {
+                uriBuilder.Query += "&minutesExpiration=60";
+            }
 
             var response = await httpClient.GetStringAsync(uriBuilder.ToString());
             var responseJson = JObject.Parse(response);
