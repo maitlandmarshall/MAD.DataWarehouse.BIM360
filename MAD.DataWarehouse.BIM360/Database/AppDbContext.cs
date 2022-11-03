@@ -17,6 +17,8 @@ namespace MAD.DataWarehouse.BIM360.Database
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+
             modelBuilder.Entity<Hub>(cfg =>
             {
                 cfg.HasKey(y => y.Id);

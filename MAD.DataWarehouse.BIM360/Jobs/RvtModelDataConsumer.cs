@@ -4,6 +4,7 @@ using MAD.DataWarehouse.BIM360.Api.Data;
 using MAD.DataWarehouse.BIM360.Api.DesignAutomation;
 using MAD.DataWarehouse.BIM360.Database;
 using Microsoft.EntityFrameworkCore;
+using MIFCore.Hangfire;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -82,8 +83,27 @@ namespace MAD.DataWarehouse.BIM360.Jobs
             this.backgroundJobClient.Enqueue<RvtModelDataConsumer>(y => y.HandleWorkItem(projectId, folderItemId, workItem.Id, uploadObjectKey));
         }
 
+        [AutomaticRetry(Attempts = 15)]
         public async Task HandleWorkItem(string projectId, string folderItemId, string workItemId, string resultObjectKey)
         {
+            var workItem = await this.designAutomationClient.GetWorkItem(workItemId);
+
+            switch (workItem.Status)
+            {
+                case "success":
+                    break;
+                case "pending":
+                    throw new RescheduleJobException(DateTime.Now.AddMinutes(2));
+                case "inprogress":
+                    throw new RescheduleJobException(DateTime.Now.AddMinutes(1));
+                case "cancelled":
+                case "failedLimitProcessingTime":
+                case "failedDownload":
+                case "failedInstructions":
+                case "failedUpload":
+                case "failedUploadOptional":
+                    break;
+            }
             
         }
 
