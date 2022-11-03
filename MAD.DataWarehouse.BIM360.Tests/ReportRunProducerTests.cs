@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace MAD.DataWarehouse.BIM360.Tests
 {
     [TestClass]
-    public class RvtModelDataConsumerTests
+    public class ReportRunProducerTests
     {
         [TestMethod]
         public async Task EnqueueWorkItem_Test()

@@ -18,5 +18,6 @@ namespace MAD.DataWarehouse.BIM360.Database
         public string Error { get; set; }
         
         public int Count { get; set; }
+        public int Index { get; set; }
     }
 }

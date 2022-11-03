@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -42,12 +43,22 @@ namespace MAD.DataWarehouse.BIM360.Api.Buckets
         public async Task<string> GetSignedDownloadUrl(string bucketKey, string objectKey)
         {
             var uriBuilder = new UriBuilder("https://developer.api.autodesk.com/oss/v2/buckets");
-            uriBuilder.Path += $"/{bucketKey}/objects/{objectKey}/signed?access=read";
+            uriBuilder.Path += $"/{bucketKey}/objects/{objectKey}/signed";
+            uriBuilder.Query = "access=read";
 
             var response = await httpClient.GetStringAsync(uriBuilder.ToString());
             var responseJson = JObject.Parse(response);
-
+            
             return responseJson.Value<string>("signedUrl");
+        }
+
+        public async Task<Stream> DownloadObject(string bucketKey, string objectKey)
+        {
+            var uriBuilder = new UriBuilder("https://developer.api.autodesk.com/oss/v2/buckets");
+            uriBuilder.Path += $"/{bucketKey}/objects/{objectKey}";
+
+            var response = await httpClient.GetStreamAsync(uriBuilder.ToString());
+            return response;
         }
     }
 }
