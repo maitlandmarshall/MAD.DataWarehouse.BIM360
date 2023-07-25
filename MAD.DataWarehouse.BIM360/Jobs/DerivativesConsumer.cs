@@ -56,13 +56,23 @@ namespace MAD.DataWarehouse.BIM360.Jobs
             var derivatives = await this.httpClient.GetStringAsync(version.Relationships.Derivatives.Meta.Link.Href);
             var result = new FolderItemDerivative
             {
-                ProjectId = projectId,
+                // Folder Items store the ProjectId with b. prefix, but the Project itself is stored without the prefix
+                // to maintain foreign key, remove the prefix
+                ProjectId = this.RemoveBPrefix(projectId),
                 FolderItemId = folderItemId,
                 Data = derivatives
             };
 
             db.Upsert(result);
             await db.SaveChangesAsync();
+        }
+
+        private string RemoveBPrefix(string id)
+        {
+            if (id.StartsWith("b.") == true)
+                return id.Substring(2);
+
+            return id;
         }
     }
 }

@@ -789,6 +789,17 @@ namespace MAD.DataWarehouse.BIM360.Database.Migrations
                     b.Navigation("Relationships")
                         .IsRequired();
                 });
+
+            modelBuilder.Entity("MAD.DataWarehouse.BIM360.Database.FolderItemDerivative", b =>
+                {
+                    b.HasOne("MAD.DataWarehouse.BIM360.Api.Accounts.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+                });
 #pragma warning restore 612, 618
         }
     }

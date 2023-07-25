@@ -14,11 +14,18 @@ namespace MAD.DataWarehouse.BIM360.Database.Migrations
                 {
                     ProjectId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FolderItemId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Data = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Data = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RVTVersion = table.Column<string>(type: "nvarchar(max)", nullable: true, computedColumnSql: "JSON_VALUE(Data, '$.derivatives[0].properties.\"Document Information\".RVTVersion')", stored: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_FolderItemDerivative", x => new { x.ProjectId, x.FolderItemId });
+                    table.ForeignKey(
+                        name: "FK_FolderItemDerivative_Project_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "Project",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
         }
 

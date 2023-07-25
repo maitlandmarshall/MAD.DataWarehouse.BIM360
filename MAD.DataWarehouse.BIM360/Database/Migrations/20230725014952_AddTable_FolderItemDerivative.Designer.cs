@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MAD.DataWarehouse.BIM360.Database.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230725011700_AddTable_FolderItemDerivative")]
+    [Migration("20230725014952_AddTable_FolderItemDerivative")]
     partial class AddTable_FolderItemDerivative
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -144,6 +144,11 @@ namespace MAD.DataWarehouse.BIM360.Database.Migrations
 
                     b.Property<string>("Data")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RVTVersion")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("nvarchar(max)")
+                        .HasComputedColumnSql("JSON_VALUE(Data, '$.derivatives[0].properties.\"Document Information\".RVTVersion')", true);
 
                     b.HasKey("ProjectId", "FolderItemId");
 
@@ -785,6 +790,17 @@ namespace MAD.DataWarehouse.BIM360.Database.Migrations
 
                     b.Navigation("Relationships")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MAD.DataWarehouse.BIM360.Database.FolderItemDerivative", b =>
+                {
+                    b.HasOne("MAD.DataWarehouse.BIM360.Api.Accounts.Project", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
                 });
 #pragma warning restore 612, 618
         }

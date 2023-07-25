@@ -35,22 +35,24 @@ namespace MAD.DataWarehouse.BIM360.Jobs
 
         public async Task EnqueueVersionsForWorkItem()
         {
-            using var db = await dbContextFactory.CreateDbContextAsync();
+            using var db = await this.dbContextFactory.CreateDbContextAsync();
 
-            var versions = db.Set<FolderItem>()
-                .Where(x => x.Type == "versions")
-                .Where(x => x.Attributes.FileType == "rvt")
+            var versions = db.Set<FolderItemDerivative>()
+                .Where(y => y.RVTVersion == "2018")
+                .Where(y => y.Project.Status == "active")
                 .AsAsyncEnumerable();
-                
+
             await foreach (var v in versions)
             {
-                this.backgroundJobClient.Enqueue<ReportRunProducer>(y => y.EnqueueWorkItem(v.ProjectId, v.Id));
+                this.backgroundJobClient.Enqueue<ReportRunProducer>(y => y.EnqueueWorkItem(v.ProjectId, v.FolderItemId));
             }
         }
 
         public async Task EnqueueWorkItem(string projectId, string folderItemId)
         {
-            using var db = await dbContextFactory.CreateDbContextAsync();
+            projectId = this.PrefixWithB(projectId);
+
+            using var db = await this.dbContextFactory.CreateDbContextAsync();
             var version = db.Set<FolderItem>().Find(folderItemId, projectId);
 
             if (version is null)
@@ -99,8 +101,8 @@ namespace MAD.DataWarehouse.BIM360.Jobs
         [AutomaticRetry(Attempts = 15)]
         public async Task HandleWorkItem(string workItemId)
         {
-            using var db = await dbContextFactory.CreateDbContextAsync();
-            
+            using var db = await this.dbContextFactory.CreateDbContextAsync();
+
             var reportRun = db.Find<ReportRun>(workItemId);
             var workItem = await this.designAutomationClient.GetWorkItem(workItemId);
 
@@ -125,7 +127,15 @@ namespace MAD.DataWarehouse.BIM360.Jobs
                 case "failedUpload":
                 case "failedUploadOptional":
                     break;
-            }            
+            }
+        }
+
+        private string PrefixWithB(string id)
+        {
+            if (id.StartsWith("b.") == false)
+                return $"b.{id}";
+
+            return id;
         }
 
 

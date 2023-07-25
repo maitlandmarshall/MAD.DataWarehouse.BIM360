@@ -157,6 +157,7 @@ namespace MAD.DataWarehouse.BIM360.Database
                 cfg.Property(y => y.RVTVersion)
                     .HasComputedColumnSql("JSON_VALUE(Data, '$.derivatives[0].properties.\"Document Information\".RVTVersion')", true);
 
+                cfg.HasOne(y => y.Project).WithMany();
             });
         }
     }
