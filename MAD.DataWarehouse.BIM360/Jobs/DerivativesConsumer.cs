@@ -48,7 +48,7 @@ namespace MAD.DataWarehouse.BIM360.Jobs
         public async Task ConsumeDerivatives(string projectId, string folderItemId)
         {
             using var db = await this.dbContextFactory.CreateDbContextAsync();
-            var version = await db.Set<FolderItem>().FindAsync(projectId, folderItemId);
+            var version = await db.Set<FolderItem>().FindAsync(folderItemId, projectId);
 
             if (version is null)
                 return;

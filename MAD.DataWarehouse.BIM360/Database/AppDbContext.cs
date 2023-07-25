@@ -154,6 +154,9 @@ namespace MAD.DataWarehouse.BIM360.Database
             modelBuilder.Entity<FolderItemDerivative>(cfg =>
             {
                 cfg.HasKey(y => new { y.ProjectId, y.FolderItemId });
+                cfg.Property(y => y.RVTVersion)
+                    .HasComputedColumnSql("JSON_VALUE(Data, '$.derivatives[0].properties.\"Document Information\".RVTVersion')", true);
+
             });
         }
     }
