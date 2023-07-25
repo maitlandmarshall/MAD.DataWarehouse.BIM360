@@ -24,6 +24,7 @@ namespace MAD.DataWarehouse.BIM360
             serviceDescriptors.AddScoped<HubConsumer>();
             serviceDescriptors.AddScoped<ProjectConsumer>();
             serviceDescriptors.AddScoped<FolderConsumer>();
+            serviceDescriptors.AddScoped<DerivativesConsumer>();
             //serviceDescriptors.AddScoped<ReportRunProducer>();
             //serviceDescriptors.AddScoped<ReportRunConsumer>();
         }
@@ -42,6 +43,7 @@ namespace MAD.DataWarehouse.BIM360
             db.Database.Migrate();
 
             recurringJobManager.CreateRecurringJob<HubConsumer>("hubs", y => y.ConsumeHubs());
+            recurringJobManager.CreateRecurringJob<DerivativesConsumer>("derivatives", y => y.EnqueueDerivativesForConsumer());
             //recurringJobManager.CreateRecurringJob<ReportRunProducer>("reportrunproducer", y => y.EnqueueVersionsForWorkItem(), "0 0 * * 0");
         }
     }

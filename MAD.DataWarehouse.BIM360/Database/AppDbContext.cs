@@ -150,6 +150,11 @@ namespace MAD.DataWarehouse.BIM360.Database
 
                 cfg.Navigation(y => y.Relationships).IsRequired();
             });
+
+            modelBuilder.Entity<FolderItemDerivative>(cfg =>
+            {
+                cfg.HasKey(y => new { y.ProjectId, y.FolderItemId });
+            });
         }
     }
 }

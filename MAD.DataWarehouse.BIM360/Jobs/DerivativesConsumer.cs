@@ -2,8 +2,10 @@
 using MAD.DataWarehouse.BIM360.Api.Data;
 using MAD.DataWarehouse.BIM360.Api.Project;
 using MAD.DataWarehouse.BIM360.Database;
+using MAD.Extensions.EFCore;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace MAD.DataWarehouse.BIM360.Jobs
@@ -12,18 +14,18 @@ namespace MAD.DataWarehouse.BIM360.Jobs
     {
         private readonly IDbContextFactory<AppDbContext> dbContextFactory;
         private readonly IProjectClient projectClient;
-        private readonly IDataClient dataClient;
+        private readonly HttpClient httpClient;
         private readonly IBackgroundJobClient backgroundJobClient;
 
         public DerivativesConsumer(
             IDbContextFactory<AppDbContext> dbContextFactory,
             IProjectClient projectClient,
-            IDataClient dataClient,
+            HttpClient httpClient,
             IBackgroundJobClient backgroundJobClient)
         {
             this.dbContextFactory = dbContextFactory;
             this.projectClient = projectClient;
-            this.dataClient = dataClient;
+            this.httpClient = httpClient;
             this.backgroundJobClient = backgroundJobClient;
         }
 
@@ -43,13 +45,24 @@ namespace MAD.DataWarehouse.BIM360.Jobs
             }
         }
 
-        public async Task ConsumeDerivatives(string projectId, string versionId)
+        public async Task ConsumeDerivatives(string projectId, string folderItemId)
         {
             using var db = await this.dbContextFactory.CreateDbContextAsync();
-            var version = await db.Set<FolderItem>().FindAsync(projectId, versionId);
+            var version = await db.Set<FolderItem>().FindAsync(projectId, folderItemId);
 
             if (version is null)
                 return;
+
+            var derivatives = await this.httpClient.GetStringAsync(version.Relationships.Derivatives.Meta.Link.Href);
+            var result = new FolderItemDerivative
+            {
+                ProjectId = projectId,
+                FolderItemId = folderItemId,
+                Data = derivatives
+            };
+
+            db.Upsert(result);
+            await db.SaveChangesAsync();
         }
     }
 }
