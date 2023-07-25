@@ -14,5 +14,7 @@ namespace MAD.DataWarehouse.BIM360.Database
 
         public string Status { get; set; }
         public IDictionary<string, object> Stats { get; set; }
+
+        public string Report { get; set; }
     }
 }

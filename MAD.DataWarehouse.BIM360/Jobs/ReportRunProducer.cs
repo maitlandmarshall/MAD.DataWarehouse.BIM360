@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using MIFCore.Hangfire;
 using System;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace MAD.DataWarehouse.BIM360.Jobs
@@ -109,6 +110,12 @@ namespace MAD.DataWarehouse.BIM360.Jobs
             reportRun.Stats = workItem.Stats;
             reportRun.Status = workItem.Status;
 
+            if (string.IsNullOrWhiteSpace(workItem.ReportUrl) == false)
+            {
+                using var client = new HttpClient();
+                reportRun.Report = await client.GetStringAsync(workItem.ReportUrl);
+            }
+
             await db.SaveChangesAsync();
 
             switch (workItem.Status)
@@ -128,6 +135,7 @@ namespace MAD.DataWarehouse.BIM360.Jobs
                 case "failedInstructions":
                 case "failedUpload":
                 case "failedUploadOptional":
+                    this.backgroundJobClient.Enqueue<ReportRunConsumer>(y => y.ConsumeReportRun(workItemId));
                     break;
             }
         }
