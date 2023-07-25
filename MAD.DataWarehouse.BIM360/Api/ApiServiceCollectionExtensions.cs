@@ -46,6 +46,11 @@ namespace MAD.DataWarehouse.BIM360.Api
                 .AddHttpClient<BucketsClient>()
                 .AddHttpMessageHandler<AuthenticationDelegationHandler>();
 
+            serviceDescriptors
+                .AddHttpClient(string.Empty)
+                .AddHttpMessageHandler<AuthenticationDelegationHandler>();
+
+
             return serviceDescriptors;
         }
     }

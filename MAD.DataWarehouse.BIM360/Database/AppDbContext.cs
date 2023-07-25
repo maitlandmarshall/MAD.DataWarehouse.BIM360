@@ -32,7 +32,7 @@ namespace MAD.DataWarehouse.BIM360.Database
 
             modelBuilder.Entity<FolderItem>(cfg =>
             {
-                cfg.HasKey(y => new { y.Id, y.ProjectId});
+                cfg.HasKey(y => new { y.Id, y.ProjectId });
                 cfg.OwnsOne(y => y.Attributes, cfg =>
                 {
                     cfg.OwnsOne(y => y.Extension, cfg =>
@@ -126,10 +126,26 @@ namespace MAD.DataWarehouse.BIM360.Database
                         cfg.Navigation(y => y.Meta).IsRequired();
                     });
 
+                    cfg.OwnsOne(y => y.Derivatives, cfg =>
+                    {
+                        cfg.OwnsOne(y => y.Data, cfg =>
+                        {
+                            cfg.HasIndex(y => y.Id);
+                        });
+
+                        cfg.OwnsOne(y => y.Meta, cfg =>
+                        {
+                            cfg.OwnsOne(y => y.Link);
+                        });
+
+                        cfg.Navigation(y => y.Meta).IsRequired();
+                    });
+
                     cfg.Navigation(y => y.Parent).IsRequired();
                     cfg.Navigation(y => y.Tip).IsRequired();
                     cfg.Navigation(y => y.Storage).IsRequired();
                     cfg.Navigation(y => y.Item).IsRequired();
+                    cfg.Navigation(y => y.Derivatives).IsRequired();
                 });
 
                 cfg.Navigation(y => y.Relationships).IsRequired();

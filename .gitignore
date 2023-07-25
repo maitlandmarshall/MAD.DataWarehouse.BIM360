@@ -362,3 +362,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /MAD.DataWarehouse.BIM360/settings.default.json
+/MAD.DataWarehouse.BIM360/MAD.DataWarehouse.BIM360.csproj

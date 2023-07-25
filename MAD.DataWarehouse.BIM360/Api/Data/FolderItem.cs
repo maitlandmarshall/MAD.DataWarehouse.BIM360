@@ -28,12 +28,15 @@ namespace MAD.DataWarehouse.BIM360.Api.Data
 
         [JsonProperty("tip")]
         public RelationshipContainer Tip { get; set; }
-        
+
         [JsonProperty("storage")]
         public RelationshipContainer Storage { get; set; }
 
         [JsonProperty("item")]
         public RelationshipContainer Item { get; set; }
+
+        [JsonProperty("derivatives")]
+        public RelationshipContainer Derivatives { get; set; }
     }
 
     public partial class RelationshipContainer
