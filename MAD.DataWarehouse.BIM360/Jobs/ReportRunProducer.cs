@@ -117,9 +117,11 @@ namespace MAD.DataWarehouse.BIM360.Jobs
                     this.backgroundJobClient.Enqueue<ReportRunConsumer>(y => y.ConsumeReportRun(workItemId));
                     break;
                 case "pending":
-                    throw new RescheduleJobException(DateTime.Now.AddMinutes(2));
+                    if (BackgroundJobContext.Current.GetJobParameter<int>("RetryCount") > 7) BackgroundJobContext.Current.BackgroundJob.SetJobParameter("RetryCount", 7);
+                    throw new DesignAutomationStateException($"Waiting. Job is in state: {workItem.Status}.");
                 case "inprogress":
-                    throw new RescheduleJobException(DateTime.Now.AddMinutes(1));
+                    if (BackgroundJobContext.Current.GetJobParameter<int>("RetryCount") > 7) BackgroundJobContext.Current.BackgroundJob.SetJobParameter("RetryCount", 7);
+                    throw new DesignAutomationStateException($"Waiting. Job is in state: {workItem.Status}.");
                 case "cancelled":
                 case "failedLimitProcessingTime":
                 case "failedDownload":
