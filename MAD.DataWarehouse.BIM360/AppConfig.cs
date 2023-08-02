@@ -1,4 +1,6 @@
-﻿namespace MAD.DataWarehouse.BIM360
+﻿using System.Collections.Generic;
+
+namespace MAD.DataWarehouse.BIM360
 {
     public class AppConfig
     {
@@ -9,7 +11,7 @@
         public string GrantType { get; set; } = "client_credentials";
         public string Scope { get; set; } = "code:all user:read viewables:read data:read data:search account:read bucket:create bucket:delete bucket:read data:write";
 
-        public string ActivityId { get; set; }
+        public IDictionary<string, string> ActivityIds { get; set; }
         public string BucketKey { get; set; }
     }
 }

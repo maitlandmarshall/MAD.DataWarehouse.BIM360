@@ -38,18 +38,24 @@ namespace MAD.DataWarehouse.BIM360.Jobs
         {
             using var db = await this.dbContextFactory.CreateDbContextAsync();
 
-            var versions = db.Set<FolderItemDerivative>()
-                .Where(y => y.RVTVersion == "2018")
-                .Where(y => y.Project.Status == "active")
-                .AsAsyncEnumerable();
-
-            await foreach (var v in versions)
+            foreach (var map in this.appConfig.ActivityIds)
             {
-                this.backgroundJobClient.Enqueue<ReportRunProducer>(y => y.EnqueueWorkItem(v.ProjectId, v.FolderItemId));
+                var year = map.Key;
+                var activityId = map.Value;
+
+                var versions = db.Set<FolderItemDerivative>()
+                    .Where(y => y.RVTVersion == year)
+                    .Where(y => y.Project.Status == "active")
+                    .AsAsyncEnumerable();
+
+                await foreach (var v in versions)
+                {
+                    this.backgroundJobClient.Enqueue<ReportRunProducer>(y => y.EnqueueWorkItem(v.ProjectId, v.FolderItemId, activityId));
+                }
             }
         }
 
-        public async Task EnqueueWorkItem(string projectId, string folderItemId)
+        public async Task EnqueueWorkItem(string projectId, string folderItemId, string activityId)
         {
             projectId = this.PrefixWithB(projectId);
 
@@ -68,7 +74,7 @@ namespace MAD.DataWarehouse.BIM360.Jobs
 
             var workItem = await this.designAutomationClient.CreateWorkItem(new
             {
-                activityId = this.appConfig.ActivityId,
+                activityId,
                 arguments = new
                 {
                     rvtFile = new

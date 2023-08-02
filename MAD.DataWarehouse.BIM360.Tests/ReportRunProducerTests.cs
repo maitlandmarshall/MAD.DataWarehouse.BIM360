@@ -1,12 +1,6 @@
-﻿using MAD.DataWarehouse.BIM360.Api.Buckets;
-using MAD.DataWarehouse.BIM360.Jobs;
+﻿using MAD.DataWarehouse.BIM360.Jobs;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MAD.DataWarehouse.BIM360.Tests
 {
@@ -20,8 +14,8 @@ namespace MAD.DataWarehouse.BIM360.Tests
             var folderItemId = "urn:adsk.wipprod:fs.file:vf.6oxKZDcFRQ2FWQFZ1yXuCA?version=2";
 
             var bucketsClient = ServiceProviderFactory.Create().GetRequiredService<ReportRunProducer>();
-            await bucketsClient.EnqueueWorkItem(projectId, folderItemId);
-        
+            await bucketsClient.EnqueueWorkItem(projectId, folderItemId, "DWS.ModelDataExport+prod");
+
         }
     }
 }
